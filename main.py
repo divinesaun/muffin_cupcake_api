@@ -8,6 +8,14 @@ warnings.filterwarnings("ignore")
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # or '*' to allow all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all HTTP methods
+    allow_headers=["*"],  # Allow all headers
+)
+
 def load_pickle(filename):
     with open(filename, 'rb') as file:
         contents = joblib.load(file)
