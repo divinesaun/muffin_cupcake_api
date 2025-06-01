@@ -1,6 +1,8 @@
 import joblib
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 import numpy as np
 import warnings
@@ -8,6 +10,12 @@ warnings.filterwarnings("ignore")
 
 
 app = FastAPI()
+
+# Mount static files
+app.mount("/static", StaticFiles(directory="templates"), name="static")
+
+# Set up templates
+templates = Jinja2Templates(directory="templates")
 
 app.add_middleware(
     CORSMiddleware,
@@ -35,8 +43,8 @@ class Data(BaseModel):
     Salt: int
 
 @app.get("/")
-async def home():
-    return {"message": "This is an API for Muffin vs Cupcake classification"}
+async def home(request: Request):
+    return templates.TemplateResponse("base.html", {"request": request})
 
 
 @app.post("/predict")
